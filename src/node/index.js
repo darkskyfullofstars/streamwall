@@ -3,8 +3,9 @@ import path from 'path'
 import yargs from 'yargs'
 import TOML from '@iarna/toml'
 import * as Y from 'yjs'
-import * as Sentry from '@sentry/electron/main'
+
 import { app, shell, session, BrowserWindow } from 'electron'
+import * as Sentry from '@sentry/electron/main'
 
 import { ensureValidURL } from '../util'
 import {
@@ -15,6 +16,7 @@ import {
   markDataSource,
   combineDataSources,
 } from './data'
+
 import * as persistence from './persistence'
 import { Auth, StateWrapper } from './auth'
 import StreamWindow from './StreamWindow'
@@ -22,9 +24,12 @@ import TwitchBot from './TwitchBot'
 import StreamdelayClient from './StreamdelayClient'
 import initWebServer from './server'
 
+
+// Sentry ID 
 const SENTRY_DSN =
   'https://e630a21dcf854d1a9eb2a7a8584cbd0b@o459879.ingest.sentry.io/5459505'
 
+  // This function uses the yargs library to define and parse command-line arguments. Possibly the arugements defined in the Toml Files
 function parseArgs() {
   return yargs
     .config('config', (configPath) => {
@@ -71,7 +76,7 @@ function parseArgs() {
     })
     .option('window.active-color', {
       describe: 'Active (highlight) color of wall',
-      default: '#fff',
+      default: '#D70606',
     })
     .group(['data.interval', 'data.json-url', 'data.toml-file'], 'Datasources')
     .option('data.interval', {
@@ -210,6 +215,7 @@ function parseArgs() {
     .help().argv
 }
 
+// The main function is the main entry point of the application. It initializes various components, such as StreamWindow, Auth, StateWrapper, etc., based on the provided command-line arguments.
 async function main(argv) {
   // Reject all permission requests from web content.
   session
@@ -426,6 +432,7 @@ async function main(argv) {
   }
 }
 
+// The init function sets up additional configurations for Electron and initializes the main function (main) after the Electron app is ready.
 function init() {
   const argv = parseArgs()
   if (argv.help) {
@@ -448,6 +455,7 @@ function init() {
     })
 }
 
+// This block checks if the script is being run directly (require.main === module) and calls the init function in that case.
 if (require.main === module) {
   init()
 }

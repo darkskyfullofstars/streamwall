@@ -46,14 +46,16 @@ export default class StreamWindow extends EventEmitter {
       useContentSize: true,
       show: false,
     })
-    win.removeMenu()
-    win.loadURL('about:blank')
-    win.on('close', () => this.emit('close'))
+    win.removeMenu() // Remove the default menu bar. Can be added back with removing this line.
+    win.loadURL('about:blank') // Default URL of the Electron BrowserWindow is 'about:blank'.
+    win.on('close', () => this.emit('close')) // Closing the Electron BrowserWindow should close the entire application.
 
     // Work around https://github.com/electron/electron/issues/14308
     // via https://github.com/lutzroeder/netron/commit/910ce67395130690ad76382c094999a4f5b51e92
+    // Possible Bug Fix in Electron need to test with set window sizing
     win.once('ready-to-show', () => {
-      win.resizable = false
+      // win.resizable = false,
+      win.resizable = true,
       win.show()
     })
     this.win = win

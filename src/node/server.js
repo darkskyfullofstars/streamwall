@@ -1,22 +1,26 @@
-import { promisify } from 'util'
 import url from 'url'
 import http from 'http'
 import https from 'https'
+import WebSocket from 'ws'
+import * as Y from 'yjs'
 import simpleCert from 'node-simple-cert'
+
 import Koa from 'koa'
 import basicAuth from 'koa-basic-auth'
 import route from 'koa-route'
 import serveStatic from 'koa-static'
 import views from 'koa-views'
 import websocket from 'koa-easy-ws'
-import WebSocket from 'ws'
-import * as Y from 'yjs'
+
 import { create as createJSONDiffPatch } from 'jsondiffpatch'
 
+import { promisify } from 'util'
 import { roleCan } from '../roles'
 
+// Defines a constant for the session cookie name.
 export const SESSION_COOKIE_NAME = 's'
 
+// Uses jsondiffpatch to create a utility function (stateDiff) for generating the difference between two JSON objects.
 const stateDiff = createJSONDiffPatch({
   objectHash: (obj, idx) => obj._id || `$$index:${idx}`,
   // Disable text diffing, both because it's overkill, and because it can crash with emojis (https://github.com/google/diff-match-patch/issues/68)
@@ -25,6 +29,7 @@ const stateDiff = createJSONDiffPatch({
   },
 })
 
+// Initializes a Koa application with middleware for authentication, routes for handling invites, rendering views, and WebSocket handling.
 function initApp({
   auth,
   baseURL,
@@ -46,6 +51,7 @@ function initApp({
   app.use(serveStatic(webDistPath))
   app.use(websocket())
 
+  // Sets up WebSocket handling for communication between the server and clients. It includes logic for message processing, state updates, and delta transmission.
   app.use(
     route.get('/invite/:token', async (ctx, token) => {
       const tokenInfo = await auth.validateToken(token)
@@ -191,6 +197,9 @@ function initApp({
     }),
   )
 
+  // Listens for updates in the client state and state documents, sending corresponding updates to connected WebSocket clients.
+
+
   clientState.on('state', (state) => {
     for (const client of sockets) {
       if (client.ws.readyState !== WebSocket.OPEN) {
@@ -215,6 +224,9 @@ function initApp({
     }
   })
 
+  // Monitors changes in authentication state and closes WebSocket connections for unauthorized clients. Includes Koa routes for handling authentication and rendering views.
+
+
   auth.on('state', (state) => {
     const tokenIds = new Set(state.sessions.map((t) => t.id))
     for (const client of sockets) {
@@ -230,6 +242,8 @@ function initApp({
   return { app }
 }
 
+// Exports an asynchronous function for initializing the web server. It creates an HTTP or HTTPS server based on the configuration, sets up routes, and starts listening on the specified port.
+//  ... creates an HTTP or HTTPS server based on configuration, sets up routes, and starts listening
 export default async function initWebServer({
   certDir,
   certProduction,

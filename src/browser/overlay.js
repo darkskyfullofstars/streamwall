@@ -35,7 +35,7 @@ function Overlay({ config, views, streams }) {
         )
         const isBlurred = viewState.matches('displaying.running.video.blurred')
         const isLoading = viewState.matches('displaying.loading')
-        const hasTitle = data && (data.label || data.source)
+     const hasTitle = data && (data.label || data.source)
         const position = data?.labelPosition ?? 'top-left'
         return (
           <SpaceBorder
@@ -58,7 +58,7 @@ function Overlay({ config, views, streams }) {
                     data.label
                   ) : (
                     <>
-                      {data.source} &ndash; {data.city} {data.state}
+                      {data.source} &ndash; {data.city} {data.state} {data.country}
                     </>
                   )}
                 </span>

@@ -1,49 +1,49 @@
 [window]
 # Window dimensions
-#width = 1920
-#height = 1080
+width = 1920
+height = 1080
 
 # Position a frameless window (useful for capturing w/ fixed screen positions)
-#x = 0
-#y = 0
-#frameless = false
+x = 0
+y = 0
+frameless = false
 
 # Set the background color (useful for chroma-keying)
-#background-color = "#0f0"
+#background-color = "#D70606"
 
 # Set the active (highlight) color
-#active-color = "#fff"
+#active-color = "#D70606"
 
 [grid]
-#count = 3
+count = 4
 
 [control]
 # Address to serve control server from
-address = "http://localhost:80"
+address = "http://localhost:4444"
 
 # Override hostname and port
-#hostname = "localhost"
-#port = 80
+hostname = "localhost"
+port = 4444
 
 # Username and password
 username = "streamwall"
-password = "please-change-this"
+password = "local-dev"
 
 [data]
 # Interval to refresh polled datasources
-#interval = 30
+interval = 30
 
 # You can add URLs to fetch here:
-json-url = []
+#json-url = ["https://untelevised.media/live-feed/lives.json"]
 
 # You can also specify .toml files on disk. Streamwall will reload the data whenever the file changes.
 # See example.streams.toml for a sample.
-#toml-file = ["./example.streams.toml"]
+ toml-file = ["./streams.toml"]
 
 [twitch]
-#channel = "woke"
-#username = "bot-username"
-#color = "#ff0000"
+#channel = "untelevised"
+#username = "untelevised-bot"
+#color = "#D70606"
 
 # Use https://twitchtokengenerator.com/?scope=chat:read+chat:edit to generate an OAuth token:
 #token = "twitch-oauth-token"

@@ -311,12 +311,8 @@ function App({ wsEndpoint, role }) {
   const [hoveringIdx, setHoveringIdx] = useState()
   const updateHoveringIdx = useCallback(
     (ev) => {
-      const {
-        width,
-        height,
-        left,
-        top,
-      } = ev.currentTarget.getBoundingClientRect()
+      const { width, height, left, top } =
+        ev.currentTarget.getBoundingClientRect()
       const x = Math.floor(ev.clientX - left)
       const y = Math.floor(ev.clientY - top)
       const spaceWidth = width / gridCount
@@ -698,16 +694,6 @@ function App({ wsEndpoint, role }) {
               )}
             </StyledGridContainer>
           )}
-          {(roleCan(role, 'dev-tools') || roleCan(role, 'browse')) && (
-            <label>
-              <input
-                type="checkbox"
-                value={showDebug}
-                onChange={handleChangeShowDebug}
-              />
-              Show stream debug tools
-            </label>
-          )}
           <Facts />
         </StyledDataContainer>
       </Stack>
@@ -732,16 +718,21 @@ function App({ wsEndpoint, role }) {
                   Include an empty object at the end to create an extra input for a new custom stream.
                   We need it to be part of the array (rather than JSX below) for DOM diffing to match the key and retain focus.
                 */}
-                  {customStreams.map(({ link, label, kind }, idx) => (
-                    <CustomStreamInput
-                      key={idx}
-                      link={link}
-                      label={label}
-                      kind={kind}
-                      onChange={handleChangeCustomStream}
-                      onDelete={handleDeleteCustomStream}
-                    />
-                  ))}
+                  {customStreams.map(
+                    ({ link, label, kind, city, state, country }, idx) => (
+                      <CustomStreamInput
+                        key={idx}
+                        link={link}
+                        label={label}
+                        city={city}
+                        state={state}
+                        country={country}
+                        kind={kind}
+                        onChange={handleChangeCustomStream}
+                        onDelete={handleDeleteCustomStream}
+                      />
+                    ),
+                  )}
                   <CreateCustomStreamInput
                     onCreate={handleChangeCustomStream}
                   />
@@ -873,7 +864,7 @@ function StreamDelayBox({
 
 function StreamLine({
   id,
-  row: { label, source, title, link, notes, state, city },
+  row: { label, source, title, link, notes, state, city, country },
   disabled,
   onClickId,
 }) {
@@ -882,8 +873,8 @@ function StreamLine({
     onClickId(id)
   }, [onClickId, id])
   let location
-  if (state && city) {
-    location = ` (${city} ${state}) `
+  if (state && city && country) {
+    location = ` (${city} ${state} ${country}) `
   }
   return (
     <StyledStreamLine>
@@ -1043,80 +1034,48 @@ function GridControls({
       isBackgroundListening,
     ],
   )
-  const handleBlurClick = useCallback(() => onSetBlurred(idx, !isBlurred), [
-    idx,
-    onSetBlurred,
-    isBlurred,
-  ])
-  const handleReloadClick = useCallback(() => onReloadView(idx), [
-    idx,
-    onReloadView,
-  ])
+  const handleBlurClick = useCallback(
+    () => onSetBlurred(idx, !isBlurred),
+    [idx, onSetBlurred, isBlurred],
+  )
+  const handleReloadClick = useCallback(
+    () => onReloadView(idx),
+    [idx, onReloadView],
+  )
   const handleSwapClick = useCallback(() => onSwapView(idx), [idx, onSwapView])
-  const handleRotateClick = useCallback(() => onRotateView(streamId), [
-    streamId,
-    onRotateView,
-  ])
-  const handleBrowseClick = useCallback(() => onBrowse(streamId), [
-    streamId,
-    onBrowse,
-  ])
-  const handleDevToolsClick = useCallback(() => onDevTools(idx), [
-    idx,
-    onDevTools,
-  ])
+  const handleRotateClick = useCallback(
+    () => onRotateView(streamId),
+    [streamId, onRotateView],
+  )
+  const handleBrowseClick = useCallback(
+    () => onBrowse(streamId),
+    [streamId, onBrowse],
+  )
+  const handleDevToolsClick = useCallback(
+    () => onDevTools(idx),
+    [idx, onDevTools],
+  )
   return (
     <StyledGridControlsContainer style={style} onMouseDown={onMouseDown}>
-      {isDisplaying && (
-        <StyledGridButtons side="left">
-          {showDebug ? (
-            <>
-              {roleCan(role, 'browse') && (
-                <StyledSmallButton onClick={handleBrowseClick} tabIndex={1}>
-                  <WindowIcon />
-                </StyledSmallButton>
-              )}
-              {roleCan(role, 'dev-tools') && (
-                <StyledSmallButton onClick={handleDevToolsClick} tabIndex={1}>
-                  <LifeRingIcon />
-                </StyledSmallButton>
-              )}
-            </>
-          ) : (
-            <>
-              {roleCan(role, 'reload-view') && (
-                <StyledSmallButton onClick={handleReloadClick} tabIndex={1}>
-                  <ReloadIcon />
-                </StyledSmallButton>
-              )}
-              {roleCan(role, 'mutate-state-doc') && (
-                <StyledSmallButton
-                  isActive={isSwapping}
-                  onClick={handleSwapClick}
-                  tabIndex={1}
-                >
-                  <SwapIcon />
-                </StyledSmallButton>
-              )}
-              {roleCan(role, 'rotate-stream') && (
-                <StyledSmallButton onClick={handleRotateClick} tabIndex={1}>
-                  <RotateIcon />
-                </StyledSmallButton>
-              )}
-            </>
-          )}
-        </StyledGridButtons>
-      )}
-      <StyledGridButtons side="right">
-        {roleCan(role, 'set-view-blurred') && (
-          <StyledButton
-            isActive={isBlurred}
-            onClick={handleBlurClick}
-            tabIndex={1}
-          >
-            <NoVideoIcon />
-          </StyledButton>
+      <StyledGridButtons side="left">
+        {roleCan(role, 'browse') && (
+          <StyledSmallButton onClick={handleBrowseClick} tabIndex={1}>
+            <WindowIcon />
+          </StyledSmallButton>
         )}
+        {roleCan(role, 'dev-tools') && (
+          <StyledSmallButton onClick={handleDevToolsClick} tabIndex={1}>
+            <LifeRingIcon />
+          </StyledSmallButton>
+        )}
+        {roleCan(role, 'rotate-stream') && (
+          <StyledSmallButton onClick={handleRotateClick} tabIndex={1}>
+            <RotateIcon />
+          </StyledSmallButton>
+        )}
+      </StyledGridButtons>
+
+      <StyledGridButtons side="right">
         {roleCan(role, 'set-listening-view') && (
           <StyledButton
             isActive={isListening || isBackgroundListening}
@@ -1127,6 +1086,29 @@ function GridControls({
             <SoundIcon />
           </StyledButton>
         )}
+        {roleCan(role, 'set-view-blurred') && (
+          <StyledButton
+            isActive={isBlurred}
+            onClick={handleBlurClick}
+            tabIndex={1}
+          >
+            <NoVideoIcon />
+          </StyledButton>
+        )}
+        {roleCan(role, 'reload-view') && (
+          <StyledSmallButton onClick={handleReloadClick} tabIndex={1}>
+            <ReloadIcon />
+          </StyledSmallButton>
+        )}
+        {roleCan(role, 'mutate-state-doc') && (
+          <StyledSmallButton
+            isActive={isSwapping}
+            onClick={handleSwapClick}
+            tabIndex={1}
+          >
+            <SwapIcon />
+          </StyledSmallButton>
+        )}
       </StyledGridButtons>
     </StyledGridControlsContainer>
   )
@@ -1134,6 +1116,24 @@ function GridControls({
 
 function CustomStreamInput({ onChange, onDelete, ...props }) {
   const handleChangeLabel = useCallback(
+    (value) => {
+      onChange(props.link, { ...props, label: value })
+    },
+    [onChange, props],
+  )
+  const handleChangeCity = useCallback(
+    (value) => {
+      onChange(props.link, { ...props, label: value })
+    },
+    [onChange, props],
+  )
+  const handleChangeState = useCallback(
+    (value) => {
+      onChange(props.link, { ...props, label: value })
+    },
+    [onChange, props],
+  )
+  const handleChangeCountry = useCallback(
     (value) => {
       onChange(props.link, { ...props, label: value })
     },
@@ -1149,6 +1149,21 @@ function CustomStreamInput({ onChange, onDelete, ...props }) {
         onChange={handleChangeLabel}
         placeholder="Label (optional)"
       />{' '}
+      <LazyChangeInput
+        value={props.city}
+        onChange={handleChangeCity}
+        placeholder="City (optional)"
+      />{' '}
+      <LazyChangeInput
+        value={props.state}
+        onChange={handleChangeState}
+        placeholder="State (optional)"
+      />{' '}
+      <LazyChangeInput
+        value={props.country}
+        onChange={handleChangeCountry}
+        placeholder="Country (optional)"
+      />{' '}
       <a href={props.link}>{props.link}</a> <span>({props.kind})</span>{' '}
       <button onClick={handleDeleteClick}>x</button>
     </div>
@@ -1159,6 +1174,9 @@ function CreateCustomStreamInput({ onCreate }) {
   const [link, setLink] = useState('')
   const [kind, setKind] = useState('video')
   const [label, setLabel] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
+  const [country, setCountry] = useState('')
   const handleSubmit = useCallback(
     (ev) => {
       ev.preventDefault()
@@ -1166,8 +1184,11 @@ function CreateCustomStreamInput({ onCreate }) {
       setLink('')
       setKind('video')
       setLabel('')
+      setCity('')
+      setState('')
+      setCountry('')
     },
-    [onCreate, link, kind, label],
+    [onCreate, link, kind, label, city, state, country],
   )
   return (
     <form onSubmit={handleSubmit}>
@@ -1187,6 +1208,21 @@ function CreateCustomStreamInput({ onCreate }) {
         value={label}
         onChange={(ev) => setLabel(ev.target.value)}
         placeholder="Label (optional)"
+      />
+      <input
+        value={city}
+        onChange={(ev) => setCity(ev.target.value)}
+        placeholder="City (optional)"
+      />
+      <input
+        value={state}
+        onChange={(ev) => setState(ev.target.value)}
+        placeholder="State (optional)"
+      />
+      <input
+        value={country}
+        onChange={(ev) => setCountry(ev.target.value)}
+        placeholder="Country (optional)"
       />
       <button type="submit">add stream</button>
     </form>
@@ -1355,8 +1391,8 @@ const StyledGridContainer = styled.div.attrs((props) => ({
   scale: 0.75,
 }))`
   position: relative;
-  width: ${({ windowWidth, scale }) => windowWidth * scale}px;
-  height: ${({ windowHeight, scale }) => windowHeight * scale}px;
+  width: 1280px;
+  height: 600px;
   border: 2px solid black;
   background: black;
 
@@ -1416,10 +1452,12 @@ function CreateInviteInput({ onCreateInvite }) {
           value={inviteName}
         />
         <select onChange={handleChangeRole} value={inviteRole}>
-          <option value="operator">operator</option>
-          <option value="monitor">monitor</option>
+          <option value="admin">Production manager</option>
+          <option value="operator">Production Assistant</option>
+          <option value="operator">Operator</option>
+          <option value="monitor">Feed Monitor</option>
         </select>
-        <button type="submit">create invite</button>
+        <button type="submit">Invite Team Member</button>
       </form>
     </div>
   )
@@ -1447,10 +1485,13 @@ function Facts() {
   return (
     <StyledFacts>
       <BLM>Black Lives Matter.</BLM>
+      <FP>Free Palestine</FP>
       <TRM>
         Trans rights are <em>human rights.</em>
       </TRM>
-      <TIN>Technology is not neutral.</TIN>
+      <TIN>
+        Technology is <strong>not</strong> neutral.
+      </TIN>
     </StyledFacts>
   )
 }
@@ -1487,6 +1528,31 @@ const TRM = styled.div`
 const TIN = styled.div`
   background: gray;
   font-family: monospace;
+`
+const FP = styled.div`
+  background: linear-gradient(
+    to bottom,
+    #000000 26.55%,
+    #ffffff 26.55%,
+    #ffffff 73.45%,
+    #008000 73.45%
+  );
+  position: relative;
+  width: 120px;
+  text-align: center;
+  font-weight: bold;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 15px solid #e4312b; /* Adjust the size of the triangle as needed */
+    border-bottom: 15px solid transparent; /* Adjust the size of the triangle as needed */
+    border-top: 12px solid transparent; /* Adjust the size of the triangle as needed */
+    border-right: 0;
+  }
 `
 
 function main() {
