@@ -1485,13 +1485,7 @@ function Facts() {
   return (
     <StyledFacts>
       <BLM>Black Lives Matter.</BLM>
-      <FP>Free Palestine</FP>
-      <TRM>
-        Trans rights are <em>human rights.</em>
-      </TRM>
-      <TIN>
-        Technology is <strong>not</strong> neutral.
-      </TIN>
+      <FP>Free Internet</FP>
     </StyledFacts>
   )
 }
