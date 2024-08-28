@@ -1059,17 +1059,17 @@ function GridControls({
     <StyledGridControlsContainer style={style} onMouseDown={onMouseDown}>
       <StyledGridButtons side="left">
         {roleCan(role, 'browse') && (
-          <StyledSmallButton onClick={handleBrowseClick} tabIndex={1}>
+          <StyledSmallButton onClick={handleBrowseClick} tabIndex={1} title="Open in new window">
             <WindowIcon />
           </StyledSmallButton>
         )}
         {roleCan(role, 'dev-tools') && (
-          <StyledSmallButton onClick={handleDevToolsClick} tabIndex={1}>
+          <StyledSmallButton onClick={handleDevToolsClick} tabIndex={1} title="Open DevTools">
             <LifeRingIcon />
           </StyledSmallButton>
         )}
         {roleCan(role, 'rotate-stream') && (
-          <StyledSmallButton onClick={handleRotateClick} tabIndex={1}>
+          <StyledSmallButton onClick={handleRotateClick} tabIndex={1} title="Rotate stream">
             <RotateIcon />
           </StyledSmallButton>
         )}
@@ -1082,6 +1082,7 @@ function GridControls({
             activeColor={isListening ? 'red' : Color('red').desaturate(0.5)}
             onClick={handleListeningClick}
             tabIndex={1}
+            title={isListening ? "Stop listening" : (isBackgroundListening ? "Stop background listening" : "Start listening")}
           >
             <SoundIcon />
           </StyledButton>
@@ -1091,12 +1092,13 @@ function GridControls({
             isActive={isBlurred}
             onClick={handleBlurClick}
             tabIndex={1}
+            title={isBlurred ? "Unblur video" : "Blur video"}
           >
             <NoVideoIcon />
           </StyledButton>
         )}
         {roleCan(role, 'reload-view') && (
-          <StyledSmallButton onClick={handleReloadClick} tabIndex={1}>
+          <StyledSmallButton onClick={handleReloadClick} tabIndex={1} title="Reload view">
             <ReloadIcon />
           </StyledSmallButton>
         )}
@@ -1105,6 +1107,7 @@ function GridControls({
             isActive={isSwapping}
             onClick={handleSwapClick}
             tabIndex={1}
+            title={isSwapping ? "Cancel swap" : "Swap streams"}
           >
             <SwapIcon />
           </StyledSmallButton>
